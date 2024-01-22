@@ -8,3 +8,19 @@
 
 - AWS CLI
 
+# Usage
+
+Copy and run in aws cli
+```
+aws cloudformation create-stack \
+  --stack-name YourStackName \
+  --template-body lamp-stack-template.yml \
+  --parameters ParameterKey=KeyName,ParameterValue=YourKeyName
+```
+
+To check status
+```
+aws cloudformation describe-stacks --stack-name YourStackName
+```
+
+
