@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-xxxxxxxxxxxxxxxxx  # Specify the desired AMI ID
+      PrivateIpAddress: 10.0.0.10     # Specify the desired private IP address
+      SubnetId: subnet-xxxxxxxxxxxxxx # Specify the subnet ID where you want to launch the instance
+      KeyName: YourKeyPairName        # Specify the key pair name for SSH access
