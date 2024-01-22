@@ -1,10 +1,32 @@
 AWSTemplateFormatVersion: '2010-09-09'
+Description: Launches a simple EC2 instance with LAMP stack on t2.micro
+
 Resources:
-  MyEC2Instance:
-    Type: 'AWS::EC2::Instance'
+  MyInstance:
+    Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t2.micro
-      ImageId: ami-xxxxxxxxxxxxxxxxx  # Specify the desired AMI ID
-      PrivateIpAddress: 10.0.0.10     # Specify the desired private IP address
-      SubnetId: subnet-xxxxxxxxxxxxxx # Specify the subnet ID where you want to launch the instance
-      KeyName: YourKeyPairName        # Specify the key pair name for SSH access
+      ImageId: ami-12345678890  # Replace with your desired AMI ID
+      InstanceType: t2.micro        # Replace desired instance type
+      KeyName: MyKeyPair          # Name of your existing key pair
+      SecurityGroupIds:
+        - sg-123456789             # Replace with SG ID allowing SSH access
+      UserData: !Join
+        - - |
+          # Install LAMP stack and other basic tools
+          sudo yum update -y
+          sudo yum install -y httpd mysql php
+          sudo systemctl start httpd mysql
+          ... # add additional configuration here
+        - - LF
+      BlockDevices:
+        -
+          DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 8             # Set desired volume size in GB
+            VolumeType: gp2
+
+Outputs:
+  InstancePublicIp:
+    Value: !GetAtt MyInstance.PublicIp
+  InstanceId:
+    Value: !Ref MyInstance
