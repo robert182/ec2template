@@ -1,9 +1,10 @@
-# ec2template
-sample EC2 Template
+# Sample EC2 Template for AWS Cloud Formation
 
+## Basic Requirements:
 
-Requirements:
+- AWS Account
 
-AWS Account
-IAM User with ec2 create/delete instance and cloud formation create/delete permission
-AWS Conole / CLI
+- IAM User with aws cli, ec2 create/delete instance and cloud formation create/delete permission
+
+- AWS CLI
+
