@@ -17,10 +17,13 @@ aws cloudformation create-stack \
   --template-body lamp-stack-template.yml \
   --parameters ParameterKey=KeyName,ParameterValue=YourKeyName
 ```
-
 To check status
 ```
 aws cloudformation describe-stacks --stack-name YourStackName
+```
+To delete stack and its resources created
+```
+aws cloudformation delete-stack --stack-name YourStackName
 ```
 
 
