@@ -9,13 +9,13 @@
 - AWS CLI
 
 # Usage
+Open AWS CLI copy and paste commands:
 
-Copy and run in aws cli
+To create stack and run the yml file
 ```
 aws cloudformation create-stack \
   --stack-name YourStackName \
-  --template-body lamp-stack-template.yml \
-  --parameters ParameterKey=KeyName,ParameterValue=YourKeyName
+  --template-body ec2lampstack.yml
 ```
 To check status
 ```
