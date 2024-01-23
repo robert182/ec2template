@@ -1,45 +1,39 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: LAMP Stack on EC2 Instance
-
 Parameters:
-  InstanceType:
+  InstanceName:
     Type: String
-    Description: EC2 Instance type
-    Default: t2.micro
-  DBPassword:
-    Type: String
-    NoEcho: true
-    Description: MySQL database password
+    Description: Name for the EC2 instance
+    Default: MyLampInstance
 
 Resources:
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow SSH and HTTP access
+      GroupName: Lampsecuritygroup
+      GroupDescription: Allow HTTP access from anywhere
       SecurityGroupIngress:
-      - FromPort: 22
-        ToPort: 22
-        Protocol: tcp
-        CidrIp: 123.45.67.89/32  # Your IP address
-      - FromPort: 80
+      - IpProtocol: tcp
+        FromPort: 80
         ToPort: 80
-        Protocol: tcp
-        CidrIp: 0.0.0.0/0  # Allow all for now (change later!)
+        CidrIp: 0.0.0.0/0
 
-  LampInstance:
-    Type: AWS::EC2::Instance
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-09eb2ed0e9c2f6126  # Amazon Linux 2 AMI
-      InstanceType: !Ref InstanceType
+      ImageId: ami-09eb2ed0e9c2f6126  # Specify a valid AMI ID for Amazon Linux 2
+      InstanceType: t2.micro
+      KeyName: brykey2024 # Specify your key pair
       SecurityGroupIds:
         - !Ref MySecurityGroup
-      KeyName: brykey2024  # Your key pair name
       UserData:
-        Fn::Base64:
-          !Sub |
-            #!/bin/bash
-            yum update -y
-            yum install -y httpd mysql php php-mysqlnd
-            echo "CREATE DATABASE my_database;" | mysql -u root -p${DBPassword}
-            systemctl start httpd
-            systemctl enable httpd
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          amazon-linux-extras install -y lamp-mariadb10.2-php7.2
+          systemctl enable httpd
+          systemctl start httpd
+          echo "<html><body><h1>Hello, World!</h1></body></html>" > /var/www/html/index.html
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceName
