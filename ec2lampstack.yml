@@ -1,32 +1,45 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Launches a simple EC2 instance with LAMP stack on t2.micro
+Description: LAMP Stack on EC2 Instance
+
+Parameters:
+  InstanceType:
+    Type: String
+    Description: EC2 Instance type
+    Default: t2.micro
+  DBPassword:
+    Type: String
+    NoEcho: true
+    Description: MySQL database password
 
 Resources:
-  MyInstance:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH and HTTP access
+      SecurityGroupIngress:
+      - FromPort: 22
+        ToPort: 22
+        Protocol: tcp
+        CidrIp: 123.45.67.89/32  # Your IP address
+      - FromPort: 80
+        ToPort: 80
+        Protocol: tcp
+        CidrIp: 0.0.0.0/0  # Allow all for now (change later!)
+
+  LampInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-12345678890  # Replace with your desired AMI ID
-      InstanceType: t2.micro        # Replace desired instance type
-      KeyName: MyKeyPair          # Name of your existing key pair
+      ImageId: ami-09eb2ed0e9c2f6126  # Amazon Linux 2 AMI
+      InstanceType: !Ref InstanceType
       SecurityGroupIds:
-        - sg-123456789             # Replace with SG ID allowing SSH access
-      UserData: !Join
-        - - |
-          # Install LAMP stack and other basic tools
-          sudo yum update -y
-          sudo yum install -y httpd mysql php
-          sudo systemctl start httpd mysql
-          ... # add additional configuration here
-        - - LF
-      BlockDevices:
-        -
-          DeviceName: /dev/xvda
-          Ebs:
-            VolumeSize: 8             # Set desired volume size in GB
-            VolumeType: gp2
-
-Outputs:
-  InstancePublicIp:
-    Value: !GetAtt MyInstance.PublicIp
-  InstanceId:
-    Value: !Ref MyInstance
+        - !Ref MySecurityGroup
+      KeyName: brykey2024  # Your key pair name
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd mysql php php-mysqlnd
+            echo "CREATE DATABASE my_database;" | mysql -u root -p${DBPassword}
+            systemctl start httpd
+            systemctl enable httpd
