@@ -11,7 +11,11 @@
 # Usage
 Open AWS CLI copy and paste commands:
 
-To create stack and run the yml file
+To download the yml file
+```
+wget https://github.com/robert182/ec2template/blob/main/ec2lampstack.yml
+```
+To create stack and run the yml file (replace YourStackName to desired name)
 ```
 aws cloudformation create-stack \
   --stack-name YourStackName \
